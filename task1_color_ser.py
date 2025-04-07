@@ -174,3 +174,4 @@ while cap.isOpened() :
 
 cv2.destroyAllWindows()
 
+# 识别功能(无串口) 未写完
