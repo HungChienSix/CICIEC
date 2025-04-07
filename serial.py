@@ -8,3 +8,5 @@ else:
     print("COM")
     for comport in ports_list:
         print(list(comport)[0], list(comport)[1])
+
+# 测试串口功能
