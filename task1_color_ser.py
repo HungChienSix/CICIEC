@@ -2,6 +2,12 @@
 
 import cv2
 import numpy as np
+import serial
+import serial.tools.list_ports
+
+# ser =serial.Serial("COM17",115200) #例子
+# if ser.is_open():
+#     print("COM succeed")
 
 # 创建四种颜色的掩膜
 lower_blue = np.array([100, 100, 100])  # 蓝色下限
@@ -160,6 +166,7 @@ while cap.isOpened() :
     #cv2.imshow("Mask_black", mask_black)
 
     #cv2.imshow("Blue", image_blue)
+
     #cv2.imshow("Red", image_red)
     cv2.imshow("Yellow", image_yellow)
     #cv2.imshow("Black", image_black)

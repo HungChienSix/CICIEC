@@ -2,27 +2,21 @@
 
 import cv2
 import numpy as np
-import serial
-import serial.tools.list_ports
-
-# ser =serial.Serial("COM17",115200) #例子
-# if ser.is_open():
-#     print("COM succeed")
 
 # 创建四种颜色的掩膜
-lower_blue = np.array([100, 100, 100])  # 蓝色下限
-upper_blue = np.array([130, 255, 255])  # 蓝色上限
+lower_blue = np.array([100,  45,  45])  # 蓝色下限
+upper_blue = np.array([124, 255, 255])  # 蓝色上限
 
-lower_red1 = np.array([0, 100, 100])    # 红色下限
-upper_red1 = np.array([20, 255, 255])   # 红色上限
-lower_red2 = np.array([160, 100, 100])  # 红色下限
+lower_red1 = np.array([  0,  45,  45])  # 红色下限
+upper_red1 = np.array([ 20, 255, 255])  # 红色上限
+lower_red2 = np.array([160,  45,  45])  # 红色下限
 upper_red2 = np.array([180, 255, 255])  # 红色上限
 
-lower_yellow = np.array([25, 100, 100])  # 黄色下限
-upper_yellow = np.array([35, 255, 255])  # 黄色上限
+lower_yellow = np.array([ 25,  45,  45])  # 黄色下限
+upper_yellow = np.array([ 35, 255, 255])  # 黄色上限
 
-lower_black = np.array([  0,   0,   0])  # 黑色下限
-upper_black = np.array([179, 255, 120])  # 黑色上限
+lower_black = np.array([  0,   0,   0])   # 黑色下限
+upper_black = np.array([180, 255,  45])   # 黑色上限
 
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
@@ -58,7 +52,7 @@ while cap.isOpened() :
             elif len(approx) > 6:
                 objType = "Zero"
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
-            #print("Blue", x, y, objType,area)
+            print("Blue", x, y, objType,area)
 
     # 红色
     mask1_red = cv2.inRange(image_hsv, lower_red1, upper_red1)
@@ -86,7 +80,7 @@ while cap.isOpened() :
             elif len(approx) > 6:
                 objType = "Zero"
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
-            #print("Red", x, y, objType)
+            print("Red", x, y, objType)
 
     # 黄色
     mask_yellow = cv2.inRange(image_hsv, lower_yellow, upper_yellow)
@@ -110,7 +104,7 @@ while cap.isOpened() :
             elif len(approx) > 6:
                 objType = "Zero"
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
-            #print("Yellow", x, y, objType)
+            print("Yellow", x, y, objType)
 
     # 黑色
     mask_black = cv2.inRange(image_hsv, lower_black, upper_black)
@@ -141,7 +135,7 @@ while cap.isOpened() :
 #    print(len(detected_blue))
 #    print(len(detected_red))
 #    print(len(detected_yellow))
-    print(len(detected_black))
+#    print(len(detected_black))
 
     image_red = cv2.drawContours(image_red, detected_red, -1, (0, 255, 0), 2)
     image_blue = cv2.drawContours(image_blue, detected_blue, -1, (0, 255, 0), 2)
@@ -153,9 +147,9 @@ while cap.isOpened() :
     #cv2.imshow("Mask_open_blue", mask_open_blue)
     #cv2.imshow("Mask_open_red", mask_open_red)
     #cv2.imshow("Mask_open_yellow", mask_open_yellow)
-    cv2.imshow("Mask_open_black", mask_open_black)
+    #cv2.imshow("Mask_open_black", mask_open_black)
 
-    cv2.imshow("Mask_black", mask_black)
+    #cv2.imshow("Mask_black", mask_black)
 
     cv2.imshow("Blue", image_blue)
     cv2.imshow("Red", image_red)
