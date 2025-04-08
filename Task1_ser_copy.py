@@ -1,13 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import cv2
 import numpy as np
 import serial
 import serial.tools.list_ports
-
-# ser =serial.Serial("COM17",115200) #例子
-# if ser.is_open():
-#     print("COM succeed")
 
 # 创建四种颜色的掩膜
 lower_blue = np.array([100, 100, 100])  # 蓝色下限
@@ -24,9 +18,18 @@ upper_yellow = np.array([35, 255, 255])  # 黄色上限
 lower_black = np.array([  0,   0,   0])  # 黑色下限
 upper_black = np.array([179, 255, 120])  # 黑色上限
 
+# 创建开运算核
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-cap = cv2.VideoCapture(1)
+# 打开串口
+ser =serial.Serial("COM8",115200)
+if ser.isOpen():  # 确认是否打开
+    print("SerialOK")
+else:
+    print("ERROR:SerialOpenError")
+
+# 选择摄像头
+cap = cv2.VideoCapture(0)
 
 while cap.isOpened() :
     _, image = cap.read()
@@ -59,6 +62,8 @@ while cap.isOpened() :
                 objType = "Six"
             elif len(approx) > 6:
                 objType = "Zero"
+            data = str(x)+":"+str(y)+":"+"Blue"+":"+objType
+            ser.write(data.encode('utf-8'))
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
             #print("Blue", x, y, objType,area)
 
@@ -87,6 +92,8 @@ while cap.isOpened() :
                 objType = "Six"
             elif len(approx) > 6:
                 objType = "Zero"
+            data = str(x)+":"+str(y)+":"+"Red"+":"+objType
+            ser.write(data.encode('utf-8'))
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
             #print("Red", x, y, objType)
 
@@ -102,10 +109,10 @@ while cap.isOpened() :
             perimeter = cv2.arcLength(cnt, True)  # 计算轮廓周长
             approx = cv2.approxPolyDP(cnt, 0.02 * perimeter, True)  # 获取轮廓角点坐标
             x, y, w, h = cv2.boundingRect(approx)  # 获取坐标值和宽度、高度
-            retval =cv2.minAreaRect(cnt)
-            min_counter =cv2.boxPoints(retval)
-            min_counter =np.int0(min_counter)
-            image_yellow =cv2.drawContours(image_yellow, [min_counter], -1, (0, 255, 0), 2)
+            # retval =cv2.minAreaRect(cnt)
+            # min_counter =cv2.boxPoints(retval)
+            # min_counter =np.int0(min_counter)
+            # image_yellow =cv2.drawContours(image_yellow, [min_counter], -1, (0, 255, 0), 2)
             objType = "NULL"
             if perimeter*perimeter//area >19:
                 objType = "Three"
@@ -117,6 +124,8 @@ while cap.isOpened() :
                 objType = "Six"
             elif len(approx) > 6:
                 objType = "Zero"
+            data = str(x)+":"+str(y)+":"+"Yellow"+":"+objType
+            ser.write(data.encode('utf-8'))
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
             #print("Yellow", x, y, objType)
 
@@ -143,35 +152,14 @@ while cap.isOpened() :
                objType = "Six"
             elif len(approx) > 6:
                 objType = "Zero"
+            data = str(x)+":"+str(y)+":"+"Black"+":"+objType
+            ser.write(data.encode('utf-8'))
             #print(Color,x,y,objType,perimeter*perimeter//area,len(approx))
             #print("Black", x, y, objType)
-
-#    print(len(detected_blue))
-#    print(len(detected_red))
-#    print(len(detected_yellow))
-#    print(len(detected_black))
-
-    # image_red = cv2.drawContours(image_red, detected_red, -1, (0, 255, 0), 2)
-    # image_blue = cv2.drawContours(image_blue, detected_blue, -1, (0, 255, 0), 2)
-    # image_yellow = cv2.drawContours(image_yellow, detected_yellow, -1, (0, 255, 0), 2)
-    # image_black = cv2.drawContours(image_black, detected_black, -1, (0, 255, 0), 2)
-
-    cv2.imshow("Orin",image)
-
-    #cv2.imshow("Mask_open_blue", mask_open_blue)
-    #cv2.imshow("Mask_open_red", mask_open_red)
-    #cv2.imshow("Mask_open_yellow", mask_open_yellow)
-    #cv2.imshow("Mask_open_black", mask_open_black)
-
-    #cv2.imshow("Mask_black", mask_black)
-
-    #cv2.imshow("Blue", image_blue)
-
-    #cv2.imshow("Red", image_red)
-    cv2.imshow("Yellow", image_yellow)
-    #cv2.imshow("Black", image_black)
     cv2.waitKey(100)
 
+cap.release()
 cv2.destroyAllWindows()
+ser.close()
 
 # 识别功能(含串口) 未写完
