@@ -20,7 +20,7 @@ upper_black = np.array([180, 255,  45])   # 黑色上限
 
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 while cap.isOpened() :
     _, image = cap.read()
